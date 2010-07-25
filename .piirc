@@ -2,6 +2,7 @@ use Dominion::Game;
 
 $g = Dominion::Game->new;
 $s = $g->supply;
+$p = Dominion::Player->new(name => 'Martyn');
 
-$g->player_add(Dominion::Player->new());
+$g->player_add($p);
 $g->player_add(Dominion::Player->new());
