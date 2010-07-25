@@ -15,16 +15,38 @@ sub init {
 
     $self->clear;
 
-    $self->add(map { Dominion::Cards::Estate->new   } 1..24);
-    $self->add(map { Dominion::Cards::Duchy->new    } 1..12);
-    $self->add(map { Dominion::Cards::Province->new } 1..12);
-    $self->add(map { Dominion::Cards::Curse->new    } 1..30);
-    $self->add(map { Dominion::Cards::Copper->new   } 1..60);
-    $self->add(map { Dominion::Cards::Silver->new   } 1..40);
-    $self->add(map { Dominion::Cards::Gold->new     } 1..30);
+    my %card_count_for = (
+        'Dominion::Cards::Estate'   => 24,
+        'Dominion::Cards::Duchy'    => 12,
+        'Dominion::Cards::Province' => 12,
+        'Dominion::Cards::Curse'    => 30,
+        'Dominion::Cards::Copper'   => 60,
+        'Dominion::Cards::Silver'   => 40,
+        'Dominion::Cards::Gold'     => 30,
+    );
+
+    given ( $player_count ) {
+        # TODO, put real numbers in here for different player counts
+        when (2) {
+            $card_count_for{'Dominion::Cards::Estate'}   => 24,
+            $card_count_for{'Dominion::Cards::Duchy'}    => 12,
+            $card_count_for{'Dominion::Cards::Province'} => 12,
+        }
+        when (3) {
+            $card_count_for{'Dominion::Cards::Estate'}   => 24,
+            $card_count_for{'Dominion::Cards::Duchy'}    => 12,
+            $card_count_for{'Dominion::Cards::Province'} => 12,
+        }
+    }
+
+    foreach my $card ( keys %card_count_for ) {
+        $self->add(map { $card->new   } 1..$card_count_for{$card});
+    }
 
     my $actions = Dominion::Set->new();
     $actions->add(map { $_->new } Dominion::Cards->action);
     $actions->shuffle;
-    $self->add($actions->draw(10));
+    foreach my $action ( $actions->draw(10) ) {
+        $self->add(map { (ref $action)->new } 1..10);
+    }
 }
