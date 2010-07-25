@@ -16,6 +16,7 @@ has 'cards' => (
         clear    => 'clear',
         grep     => 'grep',
         delete   => 'delete',
+        reduce   => 'reduce',
     },
 );
 
