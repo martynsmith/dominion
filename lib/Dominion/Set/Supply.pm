@@ -16,7 +16,7 @@ sub init {
     $self->clear;
 
     my %card_count_for = (
-        'Dominion::Cards::Estate'   => 24,
+        'Dominion::Cards::Estate'   => 12,
         'Dominion::Cards::Duchy'    => 12,
         'Dominion::Cards::Province' => 12,
         'Dominion::Cards::Curse'    => 30,
@@ -28,14 +28,13 @@ sub init {
     given ( $player_count ) {
         # See page 4 of the Dominion rules
         when (2) {
-            $card_count_for{'Dominion::Cards::Estate'}   = 12;
-            $card_count_for{'Dominion::Cards::Duchy'}    = 12;
-            $card_count_for{'Dominion::Cards::Province'} = 12;
-        }
-        when (3) {
             $card_count_for{'Dominion::Cards::Estate'}   = 8;
             $card_count_for{'Dominion::Cards::Duchy'}    = 8;
             $card_count_for{'Dominion::Cards::Province'} = 8;
+            $card_count_for{'Dominion::Cards::Curse'}    = 10;
+        }
+        when (3) {
+            $card_count_for{'Dominion::Cards::Curse'} = 20;
         }
     }
 
