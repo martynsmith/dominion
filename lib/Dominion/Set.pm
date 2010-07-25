@@ -15,6 +15,7 @@ has 'cards' => (
         _shuffle => 'shuffle',
         clear    => 'clear',
         grep     => 'grep',
+        delete   => 'delete',
     },
 );
 
