@@ -1,0 +1,6 @@
+use Dominion::Game;
+
+$g = Dominion::Game->new;
+
+$g->player_add(Dominion::Player->new());
+$g->player_add(Dominion::Player->new());
