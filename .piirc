@@ -1,6 +1,7 @@
 use Dominion::Game;
 
 $g = Dominion::Game->new;
+$s = $g->supply;
 
 $g->player_add(Dominion::Player->new());
 $g->player_add(Dominion::Player->new());
