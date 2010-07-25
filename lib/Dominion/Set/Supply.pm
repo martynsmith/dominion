@@ -28,13 +28,28 @@ sub init {
     given ( $player_count ) {
         # See page 4 of the Dominion rules
         when (2) {
-            $card_count_for{'Dominion::Cards::Estate'}   = 8;
+            $card_count_for{'Dominion::Cards::Estate'}   = 8 + 6; # 2 players 3 each
             $card_count_for{'Dominion::Cards::Duchy'}    = 8;
             $card_count_for{'Dominion::Cards::Province'} = 8;
             $card_count_for{'Dominion::Cards::Curse'}    = 10;
         }
         when (3) {
-            $card_count_for{'Dominion::Cards::Curse'} = 20;
+            $card_count_for{'Dominion::Cards::Estate'} = 12 + 9; # 3 players 3 each
+            $card_count_for{'Dominion::Cards::Curse'}  = 20;
+        }
+        when (4) {
+            $card_count_for{'Dominion::Cards::Estate'} = 12 + 12; # 4 players 3 each
+        }
+        # These counts are recommended in the Intrigue rules
+        when (5) {
+            $card_count_for{'Dominion::Cards::Estate'}   = 12 + 15; # 5 players 3 each
+            $card_count_for{'Dominion::Cards::Province'} = 15;
+            $card_count_for{'Dominion::Cards::Curse'}    = 40;
+        }
+        when (6) {
+            $card_count_for{'Dominion::Cards::Estate'}   = 12 + 18; # 6 players 3 each
+            $card_count_for{'Dominion::Cards::Province'} = 18;
+            $card_count_for{'Dominion::Cards::Curse'}    = 50;
         }
     }
 
