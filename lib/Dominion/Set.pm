@@ -38,5 +38,15 @@ sub shuffle {
     $self->add(@shuffled);
 }
 
+sub total_coin {
+    my ($self) = @_;
+
+    return $self->reduce(sub {
+        my ($a, $b) = @_;
+        $a = $a->coin if UNIVERSAL::isa($a, 'Dominion::Card');
+        $a + $b->coin;
+    });
+}
+
 #__PACKAGE__->meta->make_immutable;
 1;

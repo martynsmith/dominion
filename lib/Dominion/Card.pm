@@ -13,5 +13,14 @@ sub is {
     return 1 if $self->type eq $type;
     return;
 }
+
+=head2 coin
+
+How much coin does this card give you by being in your hand? (Note that this
+isn't the place for cards that give you more coin when you play them).
+
+=cut
+sub coin { 0 }
+
 #__PACKAGE__->meta->make_immutable;
 1;

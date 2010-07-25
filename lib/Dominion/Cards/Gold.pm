@@ -8,6 +8,8 @@ has '+type' => default => 'Treasure';
 has '+set'  => default => 'Dominion';
 has '+cost_gold' => default => 6;
 
+sub coin { 3 };
+
 #__PACKAGE__->meta->make_immutable;
 1;
 
