@@ -1,16 +1,17 @@
-package Dominion::Cards::Militia;
+package Dominion::Cards::Spy;
 
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Militia';
+has '+name'      => default => 'Spy';
 has '+type'      => default => 'Action';
 has '+set'       => default => 'Dominion';
 has '+cost_gold' => default => 4;
 
 # Attack
-# +2 Gold
-# Each other player discards down to 3 cards in his hand.
+# +1 Card,
+# +1 Action
+# Each player (including you) reveals the top card of his deck and either discards it or puts it back, your choice.
 
 #__PACKAGE__->meta->make_immutable;
 1;
