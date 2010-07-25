@@ -28,19 +28,19 @@ sub init {
     given ( $player_count ) {
         # TODO, put real numbers in here for different player counts
         when (2) {
-            $card_count_for{'Dominion::Cards::Estate'}   => 24,
-            $card_count_for{'Dominion::Cards::Duchy'}    => 12,
-            $card_count_for{'Dominion::Cards::Province'} => 12,
+            $card_count_for{'Dominion::Cards::Estate'}   = 24;
+            $card_count_for{'Dominion::Cards::Duchy'}    = 12;
+            $card_count_for{'Dominion::Cards::Province'} = 12;
         }
         when (3) {
-            $card_count_for{'Dominion::Cards::Estate'}   => 24,
-            $card_count_for{'Dominion::Cards::Duchy'}    => 12,
-            $card_count_for{'Dominion::Cards::Province'} => 12,
+            $card_count_for{'Dominion::Cards::Estate'}   = 24;
+            $card_count_for{'Dominion::Cards::Duchy'}    = 12;
+            $card_count_for{'Dominion::Cards::Province'} = 12;
         }
     }
 
     foreach my $card ( keys %card_count_for ) {
-        $self->add(map { $card->new   } 1..$card_count_for{$card});
+        $self->add(map { $card->new   } 1 .. $card_count_for{$card});
     }
 
     my $actions = Dominion::Set->new();
