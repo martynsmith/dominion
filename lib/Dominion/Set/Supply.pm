@@ -3,7 +3,7 @@ package Dominion::Set::Supply;
 use 5.010;
 
 use Moose;
-qxtends 'Dominion::Set';
+extends 'Dominion::Set';
 
 use Dominion::Cards;
 
