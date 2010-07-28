@@ -20,6 +20,11 @@ has 'cards' => (
     },
 );
 
+before 'add' => sub {
+    my ($self, @cards) = @_;
+    map { $_->in_set($self) } @cards;
+};
+
 sub draw {
     my ($self, $count) = @_;
 
@@ -47,6 +52,15 @@ sub total_coin {
         $a = $a->coin if UNIVERSAL::isa($a, 'Dominion::Card');
         $a + $b->coin;
     });
+}
+
+sub find_index {
+    my ($self, $card) = @_;
+
+    for ( my $i = 0; $i < $self->count; $i++ ) {
+        return $i if $self->get($i) == $card;
+    }
+    return;
 }
 
 #__PACKAGE__->meta->make_immutable;
