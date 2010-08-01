@@ -2,11 +2,11 @@ package Dominion::Card;
 
 use Moose;
 
-sub name        { die "Name is required" }
+sub name        { die 'Name is required (' . ref(shift) . ')' }
 sub tags        { qw() }
-sub box         { die "Box is required" }
-sub cost_coin   { die "Coin cost is required" }
-sub cost_potion { die "Potion cost is required" }
+sub box         { die 'Box is required (' . ref(shift) . ')' }
+sub cost_coin   { die 'Coin cost is required (' . ref(shift) . ')' }
+sub cost_potion { die 'Potion cost is required (' . ref(shift) . ')' }
 
 has 'in_set' => ( isa => 'Dominion::Set', is => 'rw', trigger => \&remove_from_current_set );
 
