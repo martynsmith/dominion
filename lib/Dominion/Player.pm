@@ -92,7 +92,7 @@ sub play {
 
     $self->playarea->add($card);
     $self->actions($self->actions - 1);
-    $card->action($self);
+    $card->action($self, $self->game);
 
     $self->buy_phase if $self->actions == 0 or $self->hand->grep(sub { $_->is('action') }) == 0;
 }
