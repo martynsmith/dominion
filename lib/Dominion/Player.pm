@@ -7,7 +7,7 @@ use Digest::MD5 qw(md5_hex);
 has 'id'        => ( is => 'ro', isa => 'Str', default => sub { substr(md5_hex(rand),0,8) } );
 has 'name'      => ( is => 'rw', isa => 'Str' );
 has 'hand'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
-has 'play'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
+has 'playarea'  => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'deck'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'discard'   => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'game'      => ( is => 'rw', isa => 'Dominion::Game', default => undef );
@@ -46,7 +46,7 @@ has 'potion'    => (
 sub reset {
     my ($self) = @_;
 
-    foreach my $set ( qw(hand play deck discard) ) {
+    foreach my $set ( qw(hand playarea deck discard) ) {
         $self->$set->clear;
     }
 }
@@ -55,11 +55,28 @@ sub action_phase {
     my ($self) = @_;
 
     $self->turnstate('action');
-    print $self->name . " - Action Phase\n";
 
-    unless ( $self->hand->grep(sub { $_->is('Action') }) ) {
-        $self->buy_phase();
-    }
+    $self->buy_phase if $self->actions == 0 or $self->hand->grep(sub { $_->is('action') }) == 0;
+}
+
+sub play {
+    my ($self, $card_name) = @_;
+
+    die "You're not currently in a game" unless $self->game;
+    die "The game isn't currently in play" unless $self->game->inplay;
+    die "You're not currently in the action-phase of your turn" unless $self->turnstate eq 'action';
+    die "You must specify a card name to play" unless $card_name and not ref $card_name;
+
+    my $card = $self->hand->card_by_name($card_name);
+
+    die "There is no $card_name in your hand" unless $card;
+    die "$card_name is not an action card" unless $card->is('action');
+
+    $self->playarea->add($card);
+    $self->actions($self->actions - 1);
+    $card->action($self);
+
+    $self->buy_phase if $self->actions == 0 or $self->hand->grep(sub { $_->is('action') }) == 0;
 }
 
 sub buy_phase {
@@ -67,20 +84,19 @@ sub buy_phase {
 
     $self->turnstate('buy');
     $self->coin_add($self->hand->total_coin);
-
-    print $self->name . " - Buy Phase (" . $self->coin . " coin)\n";
 }
 
 sub buy {
     my ($self, $card_name) = @_;
 
-    die "You must specify a card name to buy" unless $card_name and not ref $card_name;
     die "You're not currently in a game" unless $self->game;
+    die "The game isn't currently in play" unless $self->game->inplay;
     die "You're not currently in the buy-phase of your turn" unless $self->turnstate eq 'buy';
+    die "You must specify a card name to buy" unless $card_name and not ref $card_name;
 
     my $card = $self->game->supply->card_by_name($card_name);
 
-    die "There is to $card_name in the supply" unless $card;
+    die "There is no $card_name in the supply" unless $card;
 
     die "You can't afford a $card_name" if $card->cost_coin > $self->coin;
     die "You can't afford a $card_name" if $card->cost_potion > $self->potion;
@@ -98,9 +114,9 @@ sub cleanup_phase {
 
     print $self->name . " - Cleanup Phase\n";
 
-    # Put the play and hand cards onto the discard
+    # Put the playarea and hand cards onto the discard
     $self->discard->add($self->hand->cards);
-    $self->discard->add($self->play->cards);
+    $self->discard->add($self->playarea->cards);
 
     # Draw a new hand
     $self->hand->add($self->draw(5));
@@ -125,6 +141,40 @@ sub draw {
     }
     return @drawn;
 }
+
+sub next_player {
+    my ($self) = @_;
+
+    my @players = $self->game->players;
+    my $first;
+
+    while ( my $player = shift @players ) {
+        $first //= $player;
+        last if $player == $self;
+    }
+    return shift @players || $first;
+}
+
+sub prev_player {
+    my ($self) = @_;
+
+    my @players = reverse $self->game->players;
+    my $first;
+
+    while ( my $player = shift @players ) {
+        $first //= $player;
+        last if $player == $self;
+    }
+    return shift @players || $first;
+}
+
+after qw(buy play) => sub {
+    my ($self) = @_;
+
+    return unless $self->game;
+
+    $self->game->check_endgame;
+};
 
 #__PACKAGE__->meta->make_immutable;
 1;
