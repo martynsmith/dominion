@@ -9,10 +9,21 @@ sub box         { 'Dominion' }
 sub cost_coin   { 5 }
 sub cost_potion { 0 }
 
-# +1 Card
-# +1 Action
-# +1 Buy
-# +1 Gold
+sub action {
+    my ($self, $player) = @_;
+
+    # +1 card
+    $player->hand->add($player->draw(1));
+
+    # +1 action
+    $player->actions_add(1);
+
+    # +1 buy
+    $player->buys_add(1);
+
+    # +1 coin
+    $player->coin_add(1);
+}
 
 #__PACKAGE__->meta->make_immutable;
 1;
