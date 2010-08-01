@@ -20,8 +20,26 @@ subtype 'TurnState'
 
 has 'turnstate' => ( is => 'rw', isa => 'TurnState', default => 'waiting' );
 
-has 'actions' => ( is => 'rw', isa => 'Int', default => 0 );
-has 'buys'    => ( is => 'rw', isa => 'Int', default => 0 );
+has 'actions'    => (
+    traits => ['Number'],
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+    handles => {
+        actions_add => 'add',
+        actions_sub => 'sub',
+    },
+);
+has 'buys'    => (
+    traits => ['Number'],
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+    handles => {
+        buys_add => 'add',
+        buys_sub => 'sub',
+    },
+);
 has 'coin'    => (
     traits => ['Number'],
     is => 'rw',

@@ -16,7 +16,7 @@ sub action {
     $player->hand->add($player->draw(1));
 
     # +2 Actions
-    $player->actions($player->actions+2);
+    $player->actions_add(2);
 }
 
 #__PACKAGE__->meta->make_immutable;
