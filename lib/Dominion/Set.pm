@@ -67,9 +67,10 @@ sub total_victory_points {
     return $self->reduce(sub {
         my ($a, $b) = @_;
         if ( UNIVERSAL::isa($a, 'Dominion::Card') ) {
-            $a = $a->can('victory_points') ? $a->victory_points : 0;
+            $a = $a->can('victory_points') ? $a->victory_points($self) : 0;
         }
-        $a + $b->coin;
+        $a += $b->victory_points($self) if $b->can('victory_points');
+        return $a;
     });
 }
 
