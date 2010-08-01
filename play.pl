@@ -5,7 +5,6 @@ use strict;
 use warnings;
 
 use Dominion::Game;
-use List::Util qw(sum);
 use Data::Dump qw(dump);
 
 my $game = Dominion::Game->new();
@@ -18,12 +17,14 @@ $game->player_add($p3);
 $game->start;
 
 my $count = 0;
-while ( $game->active_player ) {
+while ( 1 ) {
     my $state = $game->state;
 
     dump($state);
 
     given ( $state->{state} ) {
+        when ( 'pregame' ) {
+        }
         when ( 'gameover' ) {
             print "Game over\n";
             print "---------\n";
