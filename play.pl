@@ -6,6 +6,7 @@ use warnings;
 
 use Dominion::Game;
 use List::Util qw(sum);
+use Data::Dump qw(dump);
 
 my $game = Dominion::Game->new();
 my $p1 = Dominion::Player->new(name => 'Martyn');
@@ -20,7 +21,6 @@ my $count = 0;
 while ( $game->active_player ) {
     my $state = $game->state;
 
-    use Data::Dump qw(dump);
     dump($state);
 
     given ( $state->{state} ) {
