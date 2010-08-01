@@ -62,9 +62,10 @@ sub init {
     }
 
     my $actions = Dominion::Set->new();
-    $actions->add(map { $_->new } Dominion::Cards->action);
+    $actions->add(map { $_->new } grep { $_->can('action') } Dominion::Cards->action);
     $actions->shuffle;
     foreach my $action ( $actions->draw(10) ) {
+        next unless $action;
         $self->add(map { (ref $action)->new } 1..10);
     }
 

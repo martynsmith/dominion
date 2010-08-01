@@ -3,11 +3,13 @@ use Dominion::Game;
 
 $g = Dominion::Game->new;
 $s = $g->supply;
-$p = Dominion::Player->new(name => 'Martyn');
+$p1 = Dominion::Player->new(name => 'Martyn');
 $p2 = Dominion::Player->new(name => 'Fred');
+$p3 = Dominion::Player->new(name => 'Harold');
 
-$g->player_add($p);
+$g->player_add($p1);
 $g->player_add($p2);
+$g->player_add($p3);
 
 sub supply {
     uniq map { ref } $s->cards;
@@ -16,7 +18,7 @@ sub supply {
 sub cards {
     my ($player) = @_;
     {
-        play    => [ map { ref } $player->play->cards ],
+        play    => [ map { ref } $player->playarea->cards ],
         hand    => [ map { ref } $player->hand->cards ],
         discard => [ map { ref } $player->discard->cards ],
         deck    => [ map { ref } $player->deck->cards ],
