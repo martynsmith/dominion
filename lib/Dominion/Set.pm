@@ -45,12 +45,30 @@ sub shuffle {
     $self->add(@shuffled);
 }
 
+sub cards_of_type {
+    my ($self, $tag) = @_;
+
+    return $self->grep(sub { $_->is($tag) });
+}
+
 sub total_coin {
     my ($self) = @_;
 
     return $self->reduce(sub {
         my ($a, $b) = @_;
         $a = $a->coin if UNIVERSAL::isa($a, 'Dominion::Card');
+        $a + $b->coin;
+    });
+}
+
+sub total_victory_points {
+    my ($self) = @_;
+
+    return $self->reduce(sub {
+        my ($a, $b) = @_;
+        if ( UNIVERSAL::isa($a, 'Dominion::Card') ) {
+            $a = $a->can('victory_points') ? $a->victory_points : 0;
+        }
         $a + $b->coin;
     });
 }
