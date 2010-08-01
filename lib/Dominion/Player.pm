@@ -184,6 +184,12 @@ sub prev_player {
     return shift @players || $first;
 }
 
+sub other_players {
+    my ($self) = @_;
+
+    return grep { $_ != $self } $self->game->players;
+}
+
 after qw(buy play) => sub {
     my ($self) = @_;
 
