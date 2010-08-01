@@ -3,10 +3,11 @@ package Dominion::Cards::Curse;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Curse';
-has '+type'      => default => 'Curse';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 0;
+sub name        { 'Curse' }
+sub tags        { qw(curse) }
+sub box         { 'Dominion' }
+sub cost_coin   { 0 }
+sub cost_potion { 0 }
 
 #__PACKAGE__->meta->make_immutable;
 1;

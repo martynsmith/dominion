@@ -3,10 +3,12 @@ package Dominion::Cards::Province;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name' => default => 'Province';
-has '+type' => default => 'Victory';
-has '+set'  => default => 'Dominion';
-has '+cost_coin' => default => 8;
+sub name      { 'Province' }
+sub tags      { qw(victory) }
+sub box       { 'Dominion' }
+sub cost_coin { 8 }
+
+sub victory_points { 6 }
 
 #__PACKAGE__->meta->make_immutable;
 1;

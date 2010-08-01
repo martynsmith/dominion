@@ -2,18 +2,18 @@ package Dominion::Card;
 
 use Moose;
 
-has 'name'        => ( isa => 'Str', is => 'ro', required => 1 );
-has 'type'        => ( isa => 'Str', is => 'ro', required => 1 );
-has 'set'         => ( isa => 'Str', is => 'ro', required => 1 );
-has 'cost_coin'   => ( isa => 'Int', is => 'ro', required => 1 );
-has 'cost_potion' => ( isa => 'Int', is => 'ro', required => 1, default => 0 );
-has 'in_set'      => ( isa => 'Dominion::Set', is => 'rw', trigger => \&remove_from_current_set );
+sub name        { die "Name is required" }
+sub tags        { qw() }
+sub box         { die "Box is required" }
+sub cost_coin   { die "Coin cost is required" }
+sub cost_potion { die "Potion cost is required" }
+
+has 'in_set' => ( isa => 'Dominion::Set', is => 'rw', trigger => \&remove_from_current_set );
 
 sub is {
-    my ($self, $type) = @_;
+    my ($self, $tag) = @_;
 
-    return 1 if $self->type eq $type;
-    return;
+    return scalar grep { $tag eq $_ } $self->tags;
 }
 
 sub remove_from_current_set {

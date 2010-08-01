@@ -3,10 +3,11 @@ package Dominion::Cards::Thief;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Thief';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Thief' }
+sub tags        { qw(kingdom action attack) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Attack
 # Each other player reveals the top 2 cards of his deck.

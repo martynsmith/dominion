@@ -3,10 +3,11 @@ package Dominion::Cards::Woodcutter;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Woodcutter';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 3;
+sub name        { 'Woodcutter' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 3 }
+sub cost_potion { 0 }
 
 # +1 Buy
 # +2 Gold

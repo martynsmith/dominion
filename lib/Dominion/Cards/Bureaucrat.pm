@@ -3,10 +3,11 @@ package Dominion::Cards::Bureaucrat;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Bureaucrat';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Bureaucrat' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Attack
 # Gain a silver card; put it on top of your deck.

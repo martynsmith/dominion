@@ -3,10 +3,11 @@ package Dominion::Cards::Workshop;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Workshop';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 3;
+sub name        { 'Workshop' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 3 }
+sub cost_potion { 0 }
 
 # Gain a card costing up to 4
 

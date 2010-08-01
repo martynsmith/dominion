@@ -3,10 +3,11 @@ package Dominion::Cards::Mine;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Mine';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Mine' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # Trash a Trasure card from your hand. Gain a Treasure card costing up to 3
 # more; put it into your hand.

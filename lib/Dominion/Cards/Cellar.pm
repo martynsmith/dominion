@@ -3,10 +3,11 @@ package Dominion::Cards::Cellar;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Cellar';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 2;
+sub name        { 'Cellar' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 2 }
+sub cost_potion { 0 }
 
 # +1 Action
 # Discard any number of cards. +1 Card per card discarded

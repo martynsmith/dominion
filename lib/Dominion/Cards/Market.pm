@@ -3,10 +3,11 @@ package Dominion::Cards::Market;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Market';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Market' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # +1 Card
 # +1 Action

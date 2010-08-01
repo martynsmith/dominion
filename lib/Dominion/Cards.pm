@@ -6,8 +6,8 @@ use Module::Pluggable sub_name => 'all', search_path => 'Dominion::Cards', requi
 
 __PACKAGE__->all;
 
-sub victory { grep { $_->new->type eq 'Victory' } __PACKAGE__->all }
-sub treasure { grep { $_->new->type eq 'Treasure' } __PACKAGE__->all }
-sub action { grep { $_->new->type eq 'Action' } __PACKAGE__->all }
+sub victory  { grep { $_->is('victory')  } __PACKAGE__->all }
+sub treasure { grep { $_->is('treasure') } __PACKAGE__->all }
+sub action   { grep { $_->is('action')   } __PACKAGE__->all }
 
 1;

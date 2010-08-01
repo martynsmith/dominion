@@ -3,10 +3,11 @@ package Dominion::Cards::Laboratory;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Laboratory';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Laboratory' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # +2 Cards
 # +1 Action

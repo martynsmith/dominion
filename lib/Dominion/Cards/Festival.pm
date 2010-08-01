@@ -3,10 +3,11 @@ package Dominion::Cards::Festival;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Festival';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Festival' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # +2 Actions
 # +1 Buy

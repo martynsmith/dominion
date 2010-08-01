@@ -3,10 +3,11 @@ package Dominion::Cards::Moneylender;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Moneylender';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Moneylender' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Trash a Copper from your hand.
 # If you do, +3 Gold.

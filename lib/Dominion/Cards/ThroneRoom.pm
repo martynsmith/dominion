@@ -3,10 +3,11 @@ package Dominion::Cards::ThroneRoom;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Throne Room';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Throne Room' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Choose an Action card in your hand.
 # Play it twice.

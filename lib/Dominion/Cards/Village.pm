@@ -3,13 +3,21 @@ package Dominion::Cards::Village;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Village';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 3;
+sub name        { 'Village' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 3 }
+sub cost_potion { 0 }
 
-# +1 Card
-# +2 Actions
+sub action {
+    my ($self, $player) = @_;
+
+    # +1 Card
+    $player->hand->add($player->draw(1));
+
+    # +2 Actions
+    $player->actions($player->actions+2);
+}
 
 #__PACKAGE__->meta->make_immutable;
 1;

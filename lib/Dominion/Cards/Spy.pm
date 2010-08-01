@@ -3,10 +3,11 @@ package Dominion::Cards::Spy;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Spy';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Spy' }
+sub tags        { qw(kingdom action attack) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Attack
 # +1 Card,

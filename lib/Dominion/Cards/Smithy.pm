@@ -3,12 +3,17 @@ package Dominion::Cards::Smithy;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Smithy';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name      { 'Smithy' }
+sub tags      { qw(kingdom action) }
+sub box       { 'Dominion' }
+sub cost_coin { 4 }
 
-# +3 Cards
+sub action {
+    my ($self, $player) = @_;
+
+    # +3 cards
+    $player->hand->add($player->draw(3));
+}
 
 #__PACKAGE__->meta->make_immutable;
 1;

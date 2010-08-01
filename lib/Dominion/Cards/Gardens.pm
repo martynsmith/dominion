@@ -3,10 +3,11 @@ package Dominion::Cards::Gardens;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Gardens';
-has '+type'      => default => 'Victory';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Gardens' }
+sub tags        { qw(kingdom victory) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Worth 1 Victory for every 10 cards in your deck (rounded down).
 

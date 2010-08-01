@@ -3,10 +3,11 @@ package Dominion::Cards::Chapel;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Chapel';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 2;
+sub name        { 'Chapel' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 2 }
+sub cost_potion { 0 }
 
 # Trash up to 4 cards from your hand.
 

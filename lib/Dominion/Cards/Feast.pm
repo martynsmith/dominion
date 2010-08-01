@@ -3,10 +3,11 @@ package Dominion::Cards::Feast;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Feast';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 4;
+sub name        { 'Feast' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 4 }
+sub cost_potion { 0 }
 
 # Trash this card. Gain a card costing up to 5 Gold.
 

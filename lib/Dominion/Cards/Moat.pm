@@ -3,10 +3,11 @@ package Dominion::Cards::Moat;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Moat';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 2;
+sub name        { 'Moat' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 2 }
+sub cost_potion { 0 }
 
 # Reaction
 # +2 Cards

@@ -3,10 +3,11 @@ package Dominion::Cards::Witch;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Witch';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Witch' }
+sub tags        { qw(kingdom action attack) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # Attack
 # +2 Cards

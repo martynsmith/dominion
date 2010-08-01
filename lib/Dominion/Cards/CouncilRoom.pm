@@ -3,10 +3,11 @@ package Dominion::Cards::CouncilRoom;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Council Room';
-has '+type'      => default => 'Action';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 5;
+sub name        { 'Council Room' }
+sub tags        { qw(kingdom action) }
+sub box         { 'Dominion' }
+sub cost_coin   { 5 }
+sub cost_potion { 0 }
 
 # +4 Cards
 # +1 Buy

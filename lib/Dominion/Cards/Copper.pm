@@ -3,10 +3,11 @@ package Dominion::Cards::Copper;
 use Moose;
 extends 'Dominion::Card';
 
-has '+name'      => default => 'Copper';
-has '+type'      => default => 'Treasure';
-has '+set'       => default => 'Dominion';
-has '+cost_coin' => default => 0;
+sub name        { 'Copper' }
+sub tags        { qw(treasure) }
+sub box         { 'Dominion' }
+sub cost_coin   { 0 }
+sub cost_potion { 0 }
 
 sub coin { 1 };
 
