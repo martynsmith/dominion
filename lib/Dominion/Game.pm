@@ -103,6 +103,12 @@ sub state {
 
     my $player = $self->active_player;
 
+    unless ( $player ) {
+        return {
+            state => 'pregame',
+        }
+    }
+
     my $state = {
         state       => $self->inplay ? $player->turnstate : 'gameover',
         player_id   => $player->id,
