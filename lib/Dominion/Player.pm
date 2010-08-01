@@ -29,6 +29,16 @@ has 'coin'    => (
         coin_sub => 'sub',
     },
 );
+has 'potion'    => (
+    traits => ['Number'],
+    is => 'rw',
+    isa => 'Int',
+    default => 0,
+    handles => {
+        potion_add => 'add',
+        potion_sub => 'sub',
+    },
+);
 
 sub reset {
     my ($self) = @_;

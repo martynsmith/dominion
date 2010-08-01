@@ -6,7 +6,7 @@ extends 'Dominion::Card';
 has '+name'      => default => 'Spy';
 has '+type'      => default => 'Action';
 has '+set'       => default => 'Dominion';
-has '+cost_gold' => default => 4;
+has '+cost_coin' => default => 4;
 
 # Attack
 # +1 Card,

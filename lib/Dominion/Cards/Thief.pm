@@ -6,7 +6,7 @@ extends 'Dominion::Card';
 has '+name'      => default => 'Thief';
 has '+type'      => default => 'Action';
 has '+set'       => default => 'Dominion';
-has '+cost_gold' => default => 4;
+has '+cost_coin' => default => 4;
 
 # Attack
 # Each other player reveals the top 2 cards of his deck.

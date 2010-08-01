@@ -6,7 +6,7 @@ extends 'Dominion::Card';
 has '+name' => default => 'Gold';
 has '+type' => default => 'Treasure';
 has '+set'  => default => 'Dominion';
-has '+cost_gold' => default => 6;
+has '+cost_coin' => default => 6;
 
 sub coin { 3 };
 

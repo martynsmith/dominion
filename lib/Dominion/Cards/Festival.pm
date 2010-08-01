@@ -6,7 +6,7 @@ extends 'Dominion::Card';
 has '+name'      => default => 'Festival';
 has '+type'      => default => 'Action';
 has '+set'       => default => 'Dominion';
-has '+cost_gold' => default => 5;
+has '+cost_coin' => default => 5;
 
 # +2 Actions
 # +1 Buy
