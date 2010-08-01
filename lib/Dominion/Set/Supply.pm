@@ -61,12 +61,12 @@ sub init {
         $self->add(map { $card->new   } 1 .. $card_count_for{$card});
     }
 
-    my $actions = Dominion::Set->new();
-    $actions->add(map { $_->new } grep { $_->can('action') } Dominion::Cards->action);
-    $actions->shuffle;
-    foreach my $action ( $actions->draw(10) ) {
-        next unless $action;
-        $self->add(map { (ref $action)->new } 1..10);
+    my $kingdoms = Dominion::Set->new();
+    $kingdoms->add(map { $_->new } grep { $_->can('action') || $_->can('victory_points') } Dominion::Cards->kingdom);
+    $kingdoms->shuffle;
+    foreach my $kingdom ( $kingdoms->draw(10) ) {
+        next unless $kingdom;
+        $self->add(map { (ref $kingdom)->new } 1..10);
     }
 
     my $initial_piles = $self->initial_piles({});
