@@ -5,6 +5,10 @@ use 5.010;
 use Moose;
 extends 'Dominion::Set';
 
+use List::MoreUtils qw(uniq);
+
+has 'initial_piles' => ( is => 'rw', isa => 'HashRef' );
+
 use Dominion::Cards;
 
 sub init {
@@ -63,4 +67,25 @@ sub init {
     foreach my $action ( $actions->draw(10) ) {
         $self->add(map { (ref $action)->new } 1..10);
     }
+
+    my $initial_piles = $self->initial_piles({});
+    foreach my $card ( $self->cards ) {
+        $initial_piles->{$card->name} //= 0;
+        $initial_piles->{$card->name}++;
+    }
 }
+
+sub current_piles {
+    my ($self) = @_;
+
+    my $piles = {};
+    foreach my $card ( $self->cards ) {
+        $piles->{$card->name} //= 0;
+        $piles->{$card->name}++;
+    }
+
+    return $piles;
+}
+
+#__PACKAGE__->meta->make_immutable;
+1;
