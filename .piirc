@@ -1,3 +1,4 @@
+# vim:filetype=perl
 use List::MoreUtils qw(uniq);
 use Dominion::Game;
 
@@ -23,4 +24,8 @@ sub cards {
         discard => [ map { ref } $player->discard->cards ],
         deck    => [ map { ref } $player->deck->cards ],
     }
+}
+
+sub not_implemented {
+    sort grep { not $_->can('action') } Dominion::Cards->action();
 }
