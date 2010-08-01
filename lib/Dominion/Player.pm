@@ -2,7 +2,9 @@ package Dominion::Player;
 
 use Moose;
 use Moose::Util::TypeConstraints;
+use Digest::MD5 qw(md5_hex);
 
+has 'id'        => ( is => 'ro', isa => 'Str', default => sub { substr(md5_hex(rand),0,8) } );
 has 'name'      => ( is => 'rw', isa => 'Str' );
 has 'hand'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'play'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
