@@ -30,6 +30,12 @@ while ( $game->active_player ) {
             foreach my $player ( $game->players ) {
                 my $vp = $player->deck->total_victory_points;
                 printf "%s => %d points (%d cards)\n", $player->name, $vp, $player->deck->count;
+                my $card_count = {};
+                foreach my $card ( $player->deck->cards ) {
+                    next unless $card->is('victory');
+                    $card_count->{$card->name}++;
+                }
+                dump($card_count);
             }
             exit 0;
         }
