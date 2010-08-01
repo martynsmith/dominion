@@ -17,6 +17,7 @@ has 'cards' => (
         grep     => 'grep',
         delete   => 'delete',
         reduce   => 'reduce',
+        first    => 'first',
     },
 );
 
@@ -61,6 +62,14 @@ sub find_index {
         return $i if $self->get($i) == $card;
     }
     return;
+}
+
+sub card_by_name {
+    my ($self, $name) = @_;
+
+    my $card = $self->first(sub { $_->name eq $name });
+
+    return $card;
 }
 
 #__PACKAGE__->meta->make_immutable;

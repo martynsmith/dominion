@@ -8,6 +8,7 @@ has 'hand'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Domini
 has 'play'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'deck'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'discard'   => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
+has 'game'      => ( is => 'rw', isa => 'Dominion::Game', default => undef );
 
 subtype 'TurnState'
   => as 'Str'
@@ -63,10 +64,31 @@ sub buy_phase {
     my ($self) = @_;
 
     $self->turnstate('buy');
-    print $self->name . " - Buy Phase\n";
-
     $self->coin_add($self->hand->total_coin);
 
+    print $self->name . " - Buy Phase (" . $self->coin . " coin)\n";
+}
+
+sub buy {
+    my ($self, $card_name) = @_;
+
+    die "You must specify a card name to buy" unless $card_name and not ref $card_name;
+    die "You're not currently in a game" unless $self->game;
+    die "You're not currently in the buy-phase of your turn" unless $self->turnstate eq 'buy';
+
+    my $card = $self->game->supply->card_by_name($card_name);
+
+    die "There is to $card_name in the supply" unless $card;
+
+    die "You can't afford a $card_name" if $card->cost_coin > $self->coin;
+    die "You can't afford a $card_name" if $card->cost_potion > $self->potion;
+
+    $self->coin_sub($card->cost_coin);
+    $self->potion_sub($card->cost_potion);
+    $self->buys($self->buys - 1);
+    $self->discard->add($card);
+
+    $self->cleanup_phase if $self->buys == 0;
 }
 
 sub cleanup_phase {
@@ -76,9 +98,7 @@ sub cleanup_phase {
 
     # Put the play and hand cards onto the discard
     $self->discard->add($self->hand->cards);
-    $self->hand->clear;
     $self->discard->add($self->play->cards);
-    $self->play->clear;
 
     # Draw a new hand
     $self->hand->add($self->draw(5));
@@ -88,6 +108,7 @@ sub cleanup_phase {
     $self->coin(0);
 
     $self->turnstate('waiting');
+    $self->game->finished_turn($self);
 }
 
 sub draw {
@@ -98,7 +119,6 @@ sub draw {
     if ( @drawn < $count ) {
         $self->discard->shuffle;
         $self->deck->add($self->discard->cards);
-        $self->discard->clear;
         push @drawn, $self->deck->draw($count - @drawn);
     }
     return @drawn;

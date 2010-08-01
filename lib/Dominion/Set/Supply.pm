@@ -64,14 +64,3 @@ sub init {
         $self->add(map { (ref $action)->new } 1..10);
     }
 }
-
-sub gain {
-    my ($self, $name) = @_;
-
-    for ( my $i = 0; $i < $self->count; $i++ ) {
-        if ( $self->get($i)->name eq $name ) {
-            return $self->delete($i);
-        }
-    }
-    return;
-}
