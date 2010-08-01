@@ -130,8 +130,6 @@ sub buy {
 sub cleanup_phase {
     my ($self) = @_;
 
-    print $self->name . " - Cleanup Phase\n";
-
     # Put the playarea and hand cards onto the discard
     $self->discard->add($self->hand->cards);
     $self->discard->add($self->playarea->cards);
