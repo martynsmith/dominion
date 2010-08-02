@@ -2,6 +2,8 @@ package Dominion::Set;
 
 use Moose;
 
+with 'Dominion::EventEmitter';
+
 has 'cards' => (
     traits   => ['Array'],
     isa      => 'ArrayRef[Dominion::Card]',
@@ -26,6 +28,20 @@ before 'add' => sub {
     map { $_->in_set($self) } @cards;
 };
 
+after 'add' => sub {
+    my ($self, @cards) = @_;
+    $self->emit('add', @cards);
+};
+
+after 'clear'  => sub { $_[0]->emit('clear') };
+around 'delete' => sub {
+    my ($orig, $self, $id) = @_;
+
+    my $card = $self->$orig($id);
+    $self->emit('remove', $card);
+    return $card;
+};
+
 sub draw {
     my ($self, $count) = @_;
 
@@ -35,6 +51,8 @@ sub draw {
 
     push @cards, $self->_shift while $count-- and $self->count;
 
+    $self->emit('remove', @cards);
+
     return @cards;
 }
 
@@ -43,6 +61,7 @@ sub shuffle {
     my @shuffled = $self->_shuffle;
     $self->clear;
     $self->add(@shuffled);
+    $self->emit('shuffle');
 }
 
 sub cards_of_type {
