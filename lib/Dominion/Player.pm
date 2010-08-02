@@ -4,6 +4,8 @@ use Moose;
 use Moose::Util::TypeConstraints;
 use Digest::MD5 qw(md5_hex);
 
+with 'Dominion::EventEmitter';
+
 has 'id'        => ( is => 'ro', isa => 'Str', default => sub { substr(md5_hex(rand),0,8) } );
 has 'name'      => ( is => 'rw', isa => 'Str' );
 has 'hand'      => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
@@ -18,7 +20,15 @@ subtype 'TurnState'
   => message { "Invalid turn state specified: $_" }
 ;
 
-has 'turnstate' => ( is => 'rw', isa => 'TurnState', default => 'waiting' );
+has 'turnstate' => (
+    is => 'rw',
+    isa => 'TurnState',
+    default => 'waiting',
+    trigger => sub {
+        my ($self, $state) = @_;
+        $self->emit('turnstate', $state);
+    }
+);
 
 has 'actions'    => (
     traits => ['Number'],
