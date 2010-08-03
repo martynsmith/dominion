@@ -33,7 +33,7 @@ while ( 1 ) {
                 printf "%s => %d points (%d cards)\n", $player->name, $vp, $player->deck->count;
                 my $card_count = {};
                 foreach my $card ( $player->deck->cards ) {
-                    next unless $card->is('victory');
+                    next unless $card->is('victory') or $card->is('curse');
                     $card_count->{$card->name}++;
                 }
                 dump($card_count);
