@@ -2,6 +2,9 @@ package Dominion::Game;
 
 use 5.010;
 use Moose;
+no warnings 'recursion';
+
+with 'Dominion::EventEmitter';
 
 use Dominion::Set::Supply;
 use Dominion::Player;
@@ -23,7 +26,6 @@ has 'active_player' => ( is => 'rw', isa => 'Dominion::Player' );
 has 'supply' => ( is => 'ro', isa => 'Dominion::Set::Supply', default => sub { Dominion::Set::Supply->new }, required => 1 );
 has 'trash' => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'inplay' => ( is => 'rw', isa => 'Bool', default => 0 );
-
 
 after 'player_add' => sub {
     my ($self, $player) = @_;
@@ -54,12 +56,14 @@ sub start {
         $player->actions(1);
         $player->buys(1);
         $player->coin(0);
+        $player->add_listener('tick', sub { $self->player_ticked(shift) });
     }
 
     my @players = $self->player_shuffle;
     $self->active_player(($self->players)[0]);
     $self->inplay(1);
     $self->active_player->action_phase;
+    $self->active_player->emit('tick');
 }
 
 sub finished_turn {
@@ -95,6 +99,20 @@ sub endgame {
         $player->discard->add($player->hand->cards);
         $player->discard->add($player->playarea->cards);
         $player->deck->add($player->discard->cards);
+    }
+}
+
+sub player_ticked {
+    my ($self, $player) = @_;
+
+    my $state = $self->state;
+    $self->emit('tick', $state);
+    $self->check_endgame;
+    if ( $self->inplay ) {
+        $self->active_player->emit('response_required', $state);
+    }
+    else {
+        $self->emit('gameover');
     }
 }
 
