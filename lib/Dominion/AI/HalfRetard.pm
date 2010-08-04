@@ -7,6 +7,8 @@ no warnings 'recursion';
 
 extends 'Dominion::AI';
 
+has 'buycount' => ( is => 'rw', isa => 'Int', default => 0 );
+
 sub action {
     my ($self, $player, $state) = @_;
 
@@ -30,46 +32,53 @@ sub action {
 sub buy {
     my ($self, $player, $state) = @_;
 
+    $self->buycount($self->buycount+1);
+
     my $game = $player->game;
 
     my $coin = $state->{coin};
     my $card;
 
+    my @list;
     given ( $coin ) {
+        when ( 0 ) { return $player->cleanup_phase(); }
         when ( 1 ) { return $player->cleanup_phase(); }
         when ( 2 ) { return $player->cleanup_phase(); }
         when ( 3 ) {
-            foreach my $potential ( shuffle(qw(Village Silver)) ) {
-                ($card) //= $game->supply->card_by_name($potential);
-            }
+            @list = qw(Village Silver);
         }
         when ( 4 ) {
-            foreach my $potential ( shuffle(qw(Smithy Gardens)) ) {
-                ($card) //= $game->supply->card_by_name($potential);
-            }
+            @list = qw(Smithy);
+            push @list, 'Gardens' if $self->buycount > 10;
         }
         when ( 5 ) {
-            foreach my $potential ( shuffle(qw(Laboratory Market Festival)) ) {
-                ($card) //= $game->supply->card_by_name($potential);
-            }
+            @list = shuffle(qw(Laboratory Market Festival));
+            push @list, 'Duchy' if $self->buycount > 10;
         }
         when ( 6 ) {
-            foreach my $potential ( shuffle(qw(Gold)) ) {
-                ($card) //= $game->supply->card_by_name($potential);
-            }
+            @list = qw(Gold);
+        }
+    }
+    if ( @list ) {
+        foreach my $potential ( @list ) {
+            ($card) //= $game->supply->card_by_name($potential);
         }
     }
 
-    while ( $coin >= 0 ) {
-        my @card_names = map { $_->name } grep { $_->cost_coin == $coin } $game->supply->cards;
-        unless ( @card_names ) {
-            $coin--;
-            next;
+    $card //= do {
+        while ( $coin >= 0 ) {
+            my @cards = grep { $_->cost_coin == $coin } $game->supply->cards;
+            unless ( @cards ) {
+                $coin--;
+                next;
+            }
+            $card = @cards[int rand() * @cards];
+            last;
         }
-        my $card_name = @card_names[int rand() * @card_names];
-        $player->buy($card_name);
-        last;
-    }
+        $card;
+    };
+
+    $player->buy($card->name);
 }
 
 #__PACKAGE__->meta->make_immutable;
