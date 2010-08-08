@@ -23,6 +23,8 @@ sub action {
 
         my ($card) = $player->draw(1);
 
+        last unless $card;
+
         # check if the card is a treasure card
         if ( $card->is('treasure') ) {
             $player->hand->add($card);
