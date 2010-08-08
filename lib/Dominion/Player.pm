@@ -77,7 +77,7 @@ sub reset {
 }
 
 sub response_required {
-    my ($self, $state, $id) = @_;
+    my ($self, $state, $message) = @_;
 
     given ( $state ) {
         when ( [qw(action buy)] ) {
@@ -91,8 +91,20 @@ sub response_required {
                 potion  => $self->potion,
             });
         }
+        when ( 'interaction' ) {
+            $self->emit($state, {
+                id          => $self->id,
+                state       => $state,
+                name        => $self->name,
+                actions     => $self->actions,
+                buys        => $self->buys,
+                coin        => $self->coin,
+                potion      => $self->potion,
+                interaction => $message->{interaction},
+            });
+        }
         default {
-            die "Played needs to deal with state: $state";
+            die "Player can't deal with state: $state";
         }
     }
 }

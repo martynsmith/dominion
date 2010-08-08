@@ -37,7 +37,9 @@ sub buy {
     given ( $coin ) {
         when ( 0 ) { return $player->cleanup_phase(); }
         when ( 1 ) { return $player->cleanup_phase(); }
-        when ( 2 ) { return $player->cleanup_phase(); }
+        when ( 2 ) {
+            @list = qw(Moat);
+        }
         when ( 3 ) {
             @list = qw(Village Silver);
         }
@@ -46,7 +48,7 @@ sub buy {
             push @list, 'Gardens' if $self->buycount > 10;
         }
         when ( 5 ) {
-            @list = shuffle(qw(Laboratory Market Festival));
+            @list = shuffle(qw(Witch Laboratory Market Festival));
             push @list, 'Duchy' if $self->buycount > 10;
         }
         when ( 6 ) {
@@ -73,6 +75,16 @@ sub buy {
     };
 
     $player->buy($card->name);
+}
+
+sub attack {
+    my ($self, $player, $state, $attack) = @_;
+
+    return $attack->done if $attack->cancelled;
+
+    return $attack->play('Moat') if $player->hand->card_by_name('Moat');
+
+    return $attack->done;
 }
 
 #__PACKAGE__->meta->make_immutable;

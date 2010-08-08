@@ -9,9 +9,21 @@ sub box         { 'Dominion' }
 sub cost_coin   { 5 }
 sub cost_potion { 0 }
 
-# Attack
-# +2 Cards
-# Each other player gains a Curse card.
+sub action {
+    my ($self, $player, $game) = @_;
+
+    # +2 Card
+    $player->hand->add($player->draw(2));
+
+    # Each other player gains a curse
+    foreach my $other_player ( $player->other_players ) {
+        $game->attack($other_player, sub {
+            my $curse = $game->supply->card_by_name('Curse');
+            $other_player->discard->add($curse) if $curse;
+        });
+    }
+}
+
 
 #__PACKAGE__->meta->make_immutable;
 1;

@@ -2,6 +2,7 @@ package Dominion::AI;
 
 use 5.010;
 use Moose;
+use Moose::Util::TypeConstraints;
 
 with 'Dominion::EventEmitter';
 
@@ -13,7 +14,7 @@ has 'curried_callbacks' => ( # {{{
 
         my $curried_callbacks = {};
 
-        foreach my $cb ( qw(action buy) ) {
+        foreach my $cb ( qw(action buy interaction) ) {
             $curried_callbacks->{$cb} = sub { $self->$cb(@_) };
         }
 
@@ -28,12 +29,12 @@ has 'player' => (
         my ($self, $player, $old_player) = @_;
 
         if ( $old_player ) {
-            foreach my $cb ( qw(action buy) ) {
+            foreach my $cb ( keys %{$self->curried_callbacks} ) {
                 $old_player->remove_listener($cb, $self->curried_callbacks->{$cb});
             }
         }
 
-        foreach my $cb ( qw(action buy) ) {
+        foreach my $cb ( keys %{$self->curried_callbacks} ) {
             $player->add_listener($cb, $self->curried_callbacks->{$cb});
         }
     },
@@ -58,6 +59,27 @@ sub action {
 
 sub buy {
     die "Need to implement buy";
+}
+
+sub interaction {
+    my ($self, $player, $state) = @_;
+
+    my $interaction = $state->{interaction};
+
+    match_on_type $interaction => (
+        'Dominion::Interaction::Attack' => sub {
+            $self->attack($player, $state, $interaction);
+        }
+        => sub {
+            die "Can't deal with interaction: " . ref $interaction;
+        },
+    );
+}
+
+sub attack {
+    my ($self, $player, $state, $attack) = @_;
+
+    die "Need to implement attack";
 }
 
 #__PACKAGE__->meta->make_immutable;

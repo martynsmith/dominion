@@ -7,6 +7,7 @@ with 'Dominion::EventEmitter';
 
 use Dominion::Set::Supply;
 use Dominion::Player;
+use Dominion::Interaction::Attack;
 
 has 'players' => (
     traits   => ['Array'],
@@ -21,17 +22,21 @@ has 'players' => (
         _player_shuffle => 'shuffle',
     },
 );
+has 'set_interactions' => (
+    is       => 'rw',
+    traits   => ['Array'],
+    isa      => 'ArrayRef[Dominion::Interaction]',
+    default  => sub { [] },
+    handles  => {
+        interactions      => 'elements',
+        interaction_add   => 'push',
+        interaction_count => 'count',
+    },
+);
 has 'active_player' => ( is => 'rw', isa => 'Dominion::Player' );
 has 'supply' => ( is => 'ro', isa => 'Dominion::Set::Supply', default => sub { Dominion::Set::Supply->new }, required => 1 );
 has 'trash' => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'inplay' => ( is => 'rw', isa => 'Bool', default => 0 );
-has '_sequence' => ( is  => 'rw', isa => 'Int', default => 0 );
-
-sub sequence_reset { shift->_sequence(0) }
-sub sequence {
-    my ($self) = @_;
-    return $self->_sequence($self->_sequence+1);
-}
 
 after 'player_add' => sub {
     my ($self, $player) = @_;
@@ -48,8 +53,6 @@ sub player_shuffle {
 
 sub start {
     my ($self) = @_;
-
-    $self->sequence_reset;
 
     die "Invalid number of players: " . $self->player_count unless $self->player_count >= 2 and $self->player_count <= 8;
 
@@ -73,10 +76,21 @@ sub start {
     $self->tick;
 }
 
+sub remove_resolved_interactions {
+    my ($self) = @_;
+
+    my @pending_interactions = grep { not $_->resolved } $self->interactions;
+
+    $self->set_interactions(\@pending_interactions);
+}
+
 sub tick {
     my ($self) = @_;
 
     my @pending;
+
+    # Remove all resolved actions
+    $self->remove_resolved_interactions;
 
     # Unless there's a pending action, figure out some new ones
     unless ( @pending ) {
@@ -86,20 +100,25 @@ sub tick {
                 push @pending, {
                     state   => $state,
                     player  => $self->active_player,
-                    id      => $self->sequence,
                 }
             }
-            when ( 'pants' ) {
-                print "PANTS\n";
+            when ( 'interaction' ) {
+                foreach my $interaction ( $self->interactions ) {
+                    push @pending, {
+                        state       => $state,
+                        player      => $interaction->player,
+                        interaction => $interaction,
+                    }
+                }
             }
             default {
-                die "Unknown state: $state\n";
+                die "Unknown state: $state";
             }
         }
     }
 
     foreach my $pending ( @pending ) {
-        $pending->{player}->response_required($pending->{state}, $pending->{id});
+        $pending->{player}->response_required($pending->{state}, $pending);
     }
 }
 
@@ -112,7 +131,7 @@ sub state {
 
     return 'pregame'  unless $player;
     return 'postgame' unless $self->inplay;
-    # TODO: return 'interaction' if $self->interaction_count;
+    return 'interaction' if $self->interaction_count;
     return $player->turnstate;
 }
 
@@ -152,20 +171,19 @@ sub endgame {
     }
 }
 
-sub player_ticked {
-    my ($self, $player) = @_;
+sub attack {
+    my ($self, $target, $callback) = @_;
 
-    my $state = $self->state;
-    $self->emit('tick', $state);
-    $self->check_endgame;
-    if ( $self->inplay ) {
-        $self->active_player->emit('response_required', $state);
+    if ( $target->hand->grep(sub { $_->can('reaction') }) ) {
+        $self->interaction_add(Dominion::Interaction::Attack->new(
+            player   => $target,
+            callback => $callback,
+        ));
+        return;
     }
-    else {
-        $self->emit('gameover');
-    }
+
+    $callback->();
 }
-
 
 #__PACKAGE__->meta->make_immutable;
 1;

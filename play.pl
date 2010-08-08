@@ -12,10 +12,17 @@ use Dominion::AI::MoneyWhore;
 
 my $game = Dominion::Game->new();
 
-foreach my $AI ( qw(MoneyWhore FullRetard HalfRetard) ) {
-    my $player = Dominion::Player->new(name => $AI);
+my %players = (
+    'Martyn'  => 'HalfRetard',
+    'Forest'  => 'FullRetard',
+    'Scrooge' => 'MoneyWhore',
+    'Harry'   => 'HalfRetard',
+);
+
+foreach my $name ( keys %players ) {
+    my $player = Dominion::Player->new(name => $name);
     $game->player_add($player);
-    "Dominion::AI::$AI"->new(player => $player);
+    "Dominion::AI::$players{$name}"->new(player => $player);
 }
 
 $game->start;
