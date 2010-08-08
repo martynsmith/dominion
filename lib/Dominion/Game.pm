@@ -2,7 +2,6 @@ package Dominion::Game;
 
 use 5.010;
 use Moose;
-no warnings 'recursion';
 
 with 'Dominion::EventEmitter';
 
@@ -26,6 +25,13 @@ has 'active_player' => ( is => 'rw', isa => 'Dominion::Player' );
 has 'supply' => ( is => 'ro', isa => 'Dominion::Set::Supply', default => sub { Dominion::Set::Supply->new }, required => 1 );
 has 'trash' => ( is => 'ro', isa => 'Dominion::Set', default => sub { Dominion::Set->new } );
 has 'inplay' => ( is => 'rw', isa => 'Bool', default => 0 );
+has '_sequence' => ( is  => 'rw', isa => 'Int', default => 0 );
+
+sub sequence_reset { shift->_sequence(0) }
+sub sequence {
+    my ($self) = @_;
+    return $self->_sequence($self->_sequence+1);
+}
 
 after 'player_add' => sub {
     my ($self, $player) = @_;
@@ -43,6 +49,8 @@ sub player_shuffle {
 sub start {
     my ($self) = @_;
 
+    $self->sequence_reset;
+
     die "Invalid number of players: " . $self->player_count unless $self->player_count >= 2 and $self->player_count <= 8;
 
     $self->supply->init($self->player_count);
@@ -56,14 +64,56 @@ sub start {
         $player->actions(1);
         $player->buys(1);
         $player->coin(0);
-        $player->add_listener('tick', sub { $self->player_ticked(shift) });
     }
 
     my @players = $self->player_shuffle;
     $self->active_player(($self->players)[0]);
     $self->inplay(1);
     $self->active_player->action_phase;
-    $self->active_player->emit('tick');
+    $self->tick;
+}
+
+sub tick {
+    my ($self) = @_;
+
+    my @pending;
+
+    # Unless there's a pending action, figure out some new ones
+    unless ( @pending ) {
+        my $state = $self->state;
+        given ( $state ) {
+            when ( [qw(action buy)] ) {
+                push @pending, {
+                    state   => $state,
+                    player  => $self->active_player,
+                    id      => $self->sequence,
+                }
+            }
+            when ( 'pants' ) {
+                print "PANTS\n";
+            }
+            default {
+                die "Unknown state: $state\n";
+            }
+        }
+    }
+
+    foreach my $pending ( @pending ) {
+        $pending->{player}->response_required($pending->{state}, $pending->{id});
+    }
+}
+
+
+sub state {
+    my ($self) = @_;
+
+    my $player = $self->active_player;
+    $self->check_endgame;
+
+    return 'pregame'  unless $player;
+    return 'postgame' unless $self->inplay;
+    # TODO: return 'interaction' if $self->interaction_count;
+    return $player->turnstate;
 }
 
 sub finished_turn {
@@ -114,30 +164,6 @@ sub player_ticked {
     else {
         $self->emit('gameover');
     }
-}
-
-sub state {
-    my ($self) = @_;
-
-    my $player = $self->active_player;
-
-    unless ( $player ) {
-        return {
-            state => 'pregame',
-        }
-    }
-
-    my $state = {
-        state       => $self->inplay ? $player->turnstate : 'gameover',
-        player_id   => $player->id,
-        player_name => $player->name,
-        actions     => $player->actions,
-        buys        => $player->buys,
-        coin        => $player->coin,
-        potion      => $player->potion,
-    };
-
-    return $state;
 }
 
 

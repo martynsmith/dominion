@@ -1,7 +1,6 @@
 package Dominion::AI::FullRetard;
 
 use Moose;
-no warnings 'recursion';
 
 extends 'Dominion::AI';
 
@@ -17,7 +16,7 @@ sub buy {
 
     my $game = $player->game;
 
-    my $coin = $state->{coin};
+    my $coin = $player->coin;
     while ( $coin >= 0 ) {
         my @card_names = map { $_->name } grep { $_->cost_coin == $coin } $game->supply->cards;
         unless ( @card_names ) {

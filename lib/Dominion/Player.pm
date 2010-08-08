@@ -1,5 +1,6 @@
 package Dominion::Player;
 
+use 5.010;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Digest::MD5 qw(md5_hex);
@@ -24,10 +25,6 @@ has 'turnstate' => (
     is => 'rw',
     isa => 'TurnState',
     default => 'waiting',
-    trigger => sub {
-        my ($self, $state) = @_;
-        $self->emit('turnstate', $state);
-    }
 );
 
 has 'actions'    => (
@@ -76,6 +73,27 @@ sub reset {
 
     foreach my $set ( qw(hand playarea deck discard) ) {
         $self->$set->clear;
+    }
+}
+
+sub response_required {
+    my ($self, $state, $id) = @_;
+
+    given ( $state ) {
+        when ( [qw(action buy)] ) {
+            $self->emit($state, {
+                id      => $self->id,
+                state   => $state,
+                name    => $self->name,
+                actions => $self->actions,
+                buys    => $self->buys,
+                coin    => $self->coin,
+                potion  => $self->potion,
+            });
+        }
+        default {
+            die "Played needs to deal with state: $state";
+        }
     }
 }
 
@@ -138,7 +156,7 @@ sub buy {
 }
 
 sub cleanup_phase {
-    my ($self, $no_tick) = @_;
+    my ($self) = @_;
 
     # Put the playarea and hand cards onto the discard
     $self->discard->add($self->hand->cards);
@@ -153,7 +171,6 @@ sub cleanup_phase {
 
     $self->turnstate('waiting');
     $self->game->finished_turn($self);
-    $self->emit('tick') unless $no_tick;
 }
 
 sub draw {
@@ -164,7 +181,6 @@ sub draw {
     if ( @drawn < $count ) {
         $self->discard->shuffle;
         $self->deck->add($self->discard->cards);
-        $self->emit('shuffle');
         push @drawn, $self->deck->draw($count - @drawn);
     }
     return @drawn;
@@ -201,14 +217,6 @@ sub other_players {
 
     return grep { $_ != $self } $self->game->players;
 }
-
-after qw(buy play) => sub {
-    my ($self) = @_;
-
-    $self->game->check_endgame if $self->game;
-
-    $self->emit('tick');
-};
 
 #__PACKAGE__->meta->make_immutable;
 1;

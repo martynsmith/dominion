@@ -2,7 +2,6 @@ package Dominion::AI;
 
 use 5.010;
 use Moose;
-no warnings 'recursion';
 
 with 'Dominion::EventEmitter';
 
@@ -14,7 +13,7 @@ has 'curried_callbacks' => ( # {{{
 
         my $curried_callbacks = {};
 
-        foreach my $cb ( qw(response_required) ) {
+        foreach my $cb ( qw(action buy) ) {
             $curried_callbacks->{$cb} = sub { $self->$cb(@_) };
         }
 
@@ -29,10 +28,14 @@ has 'player' => (
         my ($self, $player, $old_player) = @_;
 
         if ( $old_player ) {
-            $old_player->remove_listener('response_required', $self->curried_callbacks->{response_required});
+            foreach my $cb ( qw(action buy) ) {
+                $old_player->remove_listener($cb, $self->curried_callbacks->{$cb});
+            }
         }
 
-        $player->add_listener('response_required', $self->curried_callbacks->{response_required});
+        foreach my $cb ( qw(action buy) ) {
+            $player->add_listener($cb, $self->curried_callbacks->{$cb});
+        }
     },
 );
 

@@ -78,8 +78,6 @@ sub total_coin {
 
     return $self->reduce(sub {
         my ($a, $b) = @_;
-        use Data::Dump qw(dump);
-        dump("CALLED: ", ref $a, ref $b);
         $a = $a->coin if UNIVERSAL::isa($a, 'Dominion::Card');
         $a + $b->coin;
     });

@@ -8,6 +8,14 @@ $p1 = Dominion::Player->new(name => 'Martyn');
 $p2 = Dominion::Player->new(name => 'Fred');
 $p3 = Dominion::Player->new(name => 'Harold');
 
+my $cb = sub { my ($self, $data) = @_; print $self->name, ' => ', $data->{state}, "\n"; };
+$p1->add_listener('action', $cb);
+$p1->add_listener('buy', $cb);
+$p2->add_listener('action', $cb);
+$p2->add_listener('buy', $cb);
+$p3->add_listener('action', $cb);
+$p3->add_listener('buy', $cb);
+
 $g->player_add($p1);
 $g->player_add($p2);
 $g->player_add($p3);

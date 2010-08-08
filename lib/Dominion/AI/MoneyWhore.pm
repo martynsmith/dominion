@@ -1,4 +1,4 @@
-package Dominion::AI::HalfRetard;
+package Dominion::AI::MoneyWhore;
 
 use 5.010;
 use Moose;
@@ -6,19 +6,13 @@ use List::Util qw(shuffle);
 
 extends 'Dominion::AI';
 
-has 'buycount' => ( is => 'rw', isa => 'Int', default => 0 );
+has 'buycount'    => ( is => 'rw', isa => 'Int', default => 0 );
+has 'moneylender' => ( is => 'rw', isa => 'Bool', default => 0 );
 
 sub action {
     my ($self, $player, $state) = @_;
 
-    my $card;
-
-    $card //= ($player->hand->grep(sub { $_->name eq 'Market' }))[0];
-    $card //= ($player->hand->grep(sub { $_->name eq 'Village' }))[0];
-    $card //= ($player->hand->grep(sub { $_->name eq 'Festival' }))[0];
-
-    # Fallback
-    $card //= ($player->hand->cards_of_type('action'))[0];
+    my $card = ($player->hand->cards_of_type('action'))[0];
 
     $player->play($card->name);
 }
@@ -39,19 +33,23 @@ sub buy {
         when ( 1 ) { return $player->cleanup_phase(); }
         when ( 2 ) { return $player->cleanup_phase(); }
         when ( 3 ) {
-            @list = qw(Village Silver);
+            @list = qw(Silver);
         }
         when ( 4 ) {
-            @list = qw(Smithy);
-            push @list, 'Gardens' if $self->buycount > 10;
+            if ( $self->moneylender ) {
+                @list = qw(Silver);
+                push @list, 'Gardens' if $self->buycount > 10;
+            }
+            else {
+                @list = qw(MoneyLender);
+                $self->moneylender(1);
+            }
         }
-        when ( 5 ) {
-            @list = shuffle(qw(Laboratory Market Festival));
-            push @list, 'Duchy' if $self->buycount > 10;
-        }
+        when ( 5 ) { return $player->cleanup_phase(); }
         when ( 6 ) {
             @list = qw(Gold);
         }
+        when ( 7 ) { return $player->cleanup_phase(); }
     }
     if ( @list ) {
         foreach my $potential ( @list ) {
