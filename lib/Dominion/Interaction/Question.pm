@@ -1,7 +1,7 @@
 package Dominion::Interaction::Question;
 
 use Moose;
-use Moose::Util::TypeConstraints;
+use Moose::Util::TypeConstraints qw(subtype as coerce from via);
 
 extends 'Dominion::Interaction';
 

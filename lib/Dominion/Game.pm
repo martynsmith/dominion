@@ -177,6 +177,7 @@ sub attack {
     if ( $target->hand->grep(sub { $_->can('reaction') }) ) {
         $self->interaction_add(Dominion::Interaction::Attack->new(
             player   => $target,
+            message  => 'You are being attacked with a ' . $card->name,
             card     => $card,
             callback => $callback,
         ));
