@@ -17,7 +17,7 @@ sub action {
 
     # Each other player gains a curse
     foreach my $other_player ( $player->other_players ) {
-        $game->attack($other_player, sub {
+        $game->attack($self, $other_player, sub {
             my $curse = $game->supply->card_by_name('Curse');
             $other_player->discard->add($curse) if $curse;
         });

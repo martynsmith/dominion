@@ -172,11 +172,12 @@ sub endgame {
 }
 
 sub attack {
-    my ($self, $target, $callback) = @_;
+    my ($self, $card, $target, $callback) = @_;
 
     if ( $target->hand->grep(sub { $_->can('reaction') }) ) {
         $self->interaction_add(Dominion::Interaction::Attack->new(
             player   => $target,
+            card     => $card,
             callback => $callback,
         ));
         return;

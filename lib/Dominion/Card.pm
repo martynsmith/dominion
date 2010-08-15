@@ -2,6 +2,8 @@ package Dominion::Card;
 
 use Moose;
 
+use Dominion::Interaction::Question;
+
 sub name        { die 'Name is required (' . ref(shift) . ')' }
 sub tags        { qw() }
 sub box         { die 'Box is required (' . ref(shift) . ')' }

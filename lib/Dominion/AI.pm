@@ -69,8 +69,11 @@ sub interaction {
     match_on_type $interaction => (
         'Dominion::Interaction::Attack' => sub {
             $self->attack($player, $state, $interaction);
-        }
-        => sub {
+        },
+        'Dominion::Interaction::Question' => sub {
+            $self->question($player, $state, $interaction);
+        },
+        sub {
             die "Can't deal with interaction: " . ref $interaction;
         },
     );

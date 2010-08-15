@@ -23,7 +23,7 @@ sub cancel {
 sub done {
     my ($self) = @_;
 
-    $self->callback->() if $self->callback and not $self->cancelled;
+    $self->callback->($self) if $self->callback and not $self->cancelled;
     $self->resolved(1);
 }
 
